@@ -1,9 +1,28 @@
+<!-- app/views/calculator/index.html.erb -->
 
-<%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
-  <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
-  <%= form.input :arg, input_html: { placeholder: "Argument 2" } %>
-  <!-- Add more inputs for additional arguments -->
-  <%= form.button :submit, "Calculate" %>
-<% end %>
+<div class="calculator">
+  <h1>Calculator</h1>
 
-<div id="result"></div>
+  <%= simple_form_for :calculator, url: calc_path do |f| %>
+    <div class="input-group">
+      <%= f.input :operator, as: :select, collection: ['+', '-', '*', '/'], prompt: 'Select an operator', input_html: { class: 'operator-select' } %>
+    </div>
+
+    <% (1..10).each do |i| %>
+      <div class="input-group">
+        <%= f.input "arguments[]", label: "Value #{i}", input_html: { id: "value#{i}", class: 'value-input' } %>
+      </div>
+    <% end %>
+
+    <div class="input-group">
+      <%= f.button :submit, "Calculate", class: 'calculate-button' %>
+    </div>
+  <% end %>
+
+  <% if @result.present? %>
+    <div class="result">
+      <h2>Result:</h2>
+      <span class="result-value"><%= @result %></span>
+    </div>
+  <% end %>
+</div>
