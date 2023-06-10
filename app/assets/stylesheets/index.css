@@ -1,0 +1,34 @@
+
+  #calcForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .input-container {
+    margin-bottom: 10px;
+  }
+
+  #argumentsContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="text"] {
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  #addArgumentBtn,
+  #clearValuesBtn,
+  #calculateBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  #result {
+    font-size: 20px;
+    margin-top: 20px;
+  }

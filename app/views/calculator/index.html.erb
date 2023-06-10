@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
   <div id="argumentsContainer">
     <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
@@ -11,44 +13,46 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const calcForm = document.getElementById("calcForm");
-    const argumentsContainer = document.getElementById("argumentsContainer");
-    const addArgumentBtn = document.getElementById("addArgumentBtn");
-    const clearValuesBtn = document.getElementById("clearValuesBtn");
-    const calculateBtn = document.getElementById("calculateBtn");
-    const resultDiv = document.getElementById("result");
-    let argumentCount = 1;
+  const calcForm = document.getElementById("calcForm");
+  const argumentsContainer = document.getElementById("argumentsContainer");
+  const addArgumentBtn = document.getElementById("addArgumentBtn");
+  const clearValuesBtn = document.getElementById("clearValuesBtn");
+  const calculateBtn = document.getElementById("calculateBtn");
+  const resultDiv = document.getElementById("result");
+  let argumentCount = 1;
 
-    addArgumentBtn.addEventListener("click", function(event) {
-      event.preventDefault();
+  addArgumentBtn.addEventListener("click", function(event) {
+    event.preventDefault();
 
-      const newInput = document.createElement("input");
-      newInput.type = "text";
-      newInput.name = `calc[arg${argumentCount}]`;
-      newInput.placeholder = `Argument ${argumentCount + 1}`;
+    const newInput = document.createElement("input");
+    newInput.type = "text";
+    newInput.name = `calc[arg${argumentCount}]`;
+    newInput.placeholder = `Argument ${argumentCount + 1}`;
 
-      argumentsContainer.appendChild(newInput);
-      argumentCount++;
-    });
-
-    clearValuesBtn.addEventListener("click", function(event) {
-      event.preventDefault();
-
-      argumentsContainer.innerHTML = "";
-      argumentCount = 1;
-    });
-
-    calcForm.addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const formData = new FormData(calcForm);
-      const arguments = Array.from(formData.values());
-
-      const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
-
-      const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
-
-      resultDiv.textContent = "Result: " + sum;
-    });
+    argumentsContainer.appendChild(newInput);
+    argumentCount++;
   });
+
+  clearValuesBtn.addEventListener("click", function(event) {
+    event.preventDefault();
+
+    argumentsContainer.innerHTML = "";
+    argumentCount = 1;
+    resultDiv.textContent = ""; // Clear the result
+  });
+
+  calcForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(calcForm);
+    const arguments = Array.from(formData.values());
+
+    const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+
+    const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
+
+    resultDiv.textContent = "Result: " + sum;
+  });
+});
+
 </script>
