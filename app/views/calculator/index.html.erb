@@ -1,58 +1,103 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
-  <div id="argumentsContainer">
-    <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
-  </div>
-  <%= form.button :button, "Add Argument", id: "addArgumentBtn" %>
+  <div id="argumentsContainer"></div>
+  <%= form.button :button, "Add number", id: "addArgumentBtn" %>
   <%= form.button :button, "Clear Values", id: "clearValuesBtn" %>
   <%= form.button :submit, "Calculate", id: "calculateBtn" %>
 <% end %>
 
 <div id="result"></div>
 
+<h2>History</h2>
+<div id="historyContainer"></div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-  const calcForm = document.getElementById("calcForm");
-  const argumentsContainer = document.getElementById("argumentsContainer");
-  const addArgumentBtn = document.getElementById("addArgumentBtn");
-  const clearValuesBtn = document.getElementById("clearValuesBtn");
-  const calculateBtn = document.getElementById("calculateBtn");
-  const resultDiv = document.getElementById("result");
-  let argumentCount = 1;
+    const calcForm = document.getElementById("calcForm");
+    const argumentsContainer = document.getElementById("argumentsContainer");
+    const addArgumentBtn = document.getElementById("addArgumentBtn");
+    const clearValuesBtn = document.getElementById("clearValuesBtn");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultDiv = document.getElementById("result");
+    const historyContainer = document.getElementById("historyContainer");
+    let argumentCount = 0;
 
-  addArgumentBtn.addEventListener("click", function(event) {
-    event.preventDefault();
+    addArgumentBtn.addEventListener("click", function(event) {
+      event.preventDefault();
 
-    const newInput = document.createElement("input");
-    newInput.type = "text";
-    newInput.name = `calc[arg${argumentCount}]`;
-    newInput.placeholder = `Argument ${argumentCount + 1}`;
+      const newInput = document.createElement("input");
+      newInput.type = "text";
+      newInput.name = `calc[]`;
 
-    argumentsContainer.appendChild(newInput);
-    argumentCount++;
+      argumentsContainer.appendChild(newInput);
+      argumentCount++;
+    });
+
+    clearValuesBtn.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      argumentsContainer.innerHTML = "";
+      argumentCount = 0;
+      resultDiv.textContent = ""; // Clear the result
+    });
+
+    calcForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(calcForm);
+      const arguments = Array.from(formData.values());
+
+      const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+
+      const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
+
+      resultDiv.textContent = "Result: " + sum;
+
+      // Save the calculation to the history
+      fetch("/calc", {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.text())
+        .then(result => {
+          // Retrieve the updated history and display it
+          fetch("/history")
+            .then(response => response.json())
+            .then(data => {
+              const historyHTML = data.map(calculation => {
+                return `
+                  <p>Arguments: ${calculation.arguments.join(", ")}</p>
+                  <p>Result: ${calculation.result}</p>
+                  <hr>
+                `;
+              }).join("");
+              historyContainer.innerHTML = historyHTML;
+            })
+            .catch(error => {
+              console.log("Error retrieving history:", error);
+            });
+        })
+        .catch(error => {
+          console.log("Error saving calculation:", error);
+        });
+    });
+
+    // Retrieve the history when the page loads
+    fetch("/history")
+      .then(response => response.json())
+      .then(data => {
+        const historyHTML = data.map(calculation => {
+          return `
+            <p>Arguments: ${calculation.arguments.join(", ")}</p>
+            <p>Result: ${calculation.result}</p>
+            <hr>
+          `;
+        }).join("");
+        historyContainer.innerHTML = historyHTML;
+      })
+      .catch(error => {
+        console.log("Error retrieving history:", error);
+      });
   });
-
-  clearValuesBtn.addEventListener("click", function(event) {
-    event.preventDefault();
-
-    argumentsContainer.innerHTML = "";
-    argumentCount = 1;
-    resultDiv.textContent = ""; // Clear the result
-  });
-
-  calcForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(calcForm);
-    const arguments = Array.from(formData.values());
-
-    const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
-
-    const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
-
-    resultDiv.textContent = "Result: " + sum;
-  });
-});
-
 </script>

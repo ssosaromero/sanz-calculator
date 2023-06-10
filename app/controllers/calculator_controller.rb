@@ -1,27 +1,45 @@
 class CalculatorController < ApplicationController
+  def index
+    @calculations = Calculation.all
+  end
 
-  class CalculatorController < ApplicationController
-    def index
-      # Render the form view
+  # def calculate
+  #   arguments = params[:calc][:arg].values.reject(&:blank?)
+  #   result = calculate_sum(arguments)
+  #   save_calculation(arguments, result)
+
+  #   render plain: result.to_s
+  # end
+
+  def calculate
+    arguments = calculation_params[:arguments].reject(&:blank?)
+    result = arguments.map(&:to_f).sum
+
+    calculation = Calculation.create(arguments: arguments, result: result)
+
+    if calculation.persisted?
+      render json: calculation
+    else
+      render json: { error: "Failed to save calculation" }, status: :unprocessable_entity
     end
-
-    def calc
-      arguments = params[:calc].values.map(&:to_f)
-      numerical_arguments = arguments.select { |arg| arg.to_s =~ /^[0-9]+(\.[0-9]+)?$/ }
-
-      sum = numerical_arguments.sum
-
-      render plain: "Result: #{sum}"
-    end
-
-
-    def history
-      previous_queries = Calculation.all
-      render json: previous_queries
-    end
-
   end
 
 
+  def history
+    calculations = Calculation.all
+    render json: calculations
+  end
 
+  private
+
+  def calculate_sum(arguments)
+    numeric_arguments = arguments.map(&:to_f)
+    sum = numeric_arguments.sum
+    sum.round(2) # Round the sum to 2 decimal places
+  end
+
+  def save_calculation(arguments, result)
+    calculation = Calculation.create(arguments: arguments, result: result)
+    calculation.save
+  end
 end
