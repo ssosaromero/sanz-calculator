@@ -11,7 +11,7 @@ class CalculatorController < ApplicationController
       result = numeric_args.sum(&:to_f)
 
       # Save the query and result in the database
-      Calculation.create(query: arguments, result: result)
+      Calculation.create(arguments: arguments, result: result)
 
       render plain: "Result: #{result}"
     end
