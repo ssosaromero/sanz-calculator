@@ -3,28 +3,32 @@ class CalculatorController < ApplicationController
     @calculations = Calculation.all
   end
 
+  # def calculate
+  #   arguments = params[:calc] || []
+
+  #   calculation = Calculation.new(arguments: arguments)
+  #   result = calculation.calculate_result
+
+  #   if calculation.save
+  #     render plain: result.to_s
+  #   else
+  #     render plain: "Error saving calculation"
+  #   end
+  # end
   def calculate
-    arguments = params[:calc] || []
+    arguments = params[:calc].reject(&:blank?)
+    sum = arguments.map(&:to_f).sum
 
-    calculation = Calculation.new(arguments: arguments)
-    result = calculation.calculate_result
+    calculation = Calculation.create(arguments: arguments, result: sum)
 
-    if calculation.save
-      render plain: result.to_s
+    if calculation.valid?
+      render plain: "Calculation saved successfully"
     else
-      render plain: "Error saving calculation"
+      render plain: "Failed to save calculation"
     end
   end
 
-  # def calculate
-  #   @calculation = Calculation.create(arguments: params[:calc])
 
-  #   render plain: @calculation.result
-
-  #   # Save the calculation to the history
-  #   session[:history] ||= []
-  #   session[:history] << @calculation.id
-  # end
 
   def history
     calculations = Calculation.last(3)
