@@ -1,9 +1,27 @@
-
 <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
   <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
   <%= form.input :arg, input_html: { placeholder: "Argument 2" } %>
   <!-- Add more inputs for additional arguments -->
-  <%= form.button :submit, "Calculate" %>
+  <%= form.button :submit, "Calculate", id: "calculateBtn" %>
 <% end %>
 
 <div id="result"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const calcForm = document.getElementById("calcForm");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultDiv = document.getElementById("result");
+
+    calcForm.addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const formData = new FormData(calcForm);
+      const arguments = Array.from(formData.values());
+
+      const sum = arguments.reduce((total, arg) => total + parseInt(arg), 0);
+
+      resultDiv.textContent = "Result: " + sum;
+    });
+  });
+</script>

@@ -15,6 +15,13 @@ class CalculatorController < ApplicationController
 
       render plain: "Result: #{result}"
     end
+
+
+    def history
+      previous_queries = Calculation.all
+      render json: previous_queries
+    end
+
   end
 
 
