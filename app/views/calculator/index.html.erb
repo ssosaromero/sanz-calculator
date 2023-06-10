@@ -3,6 +3,7 @@
     <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
   </div>
   <%= form.button :button, "Add Argument", id: "addArgumentBtn" %>
+  <%= form.button :button, "Clear Values", id: "clearValuesBtn" %>
   <%= form.button :submit, "Calculate", id: "calculateBtn" %>
 <% end %>
 
@@ -13,6 +14,7 @@
     const calcForm = document.getElementById("calcForm");
     const argumentsContainer = document.getElementById("argumentsContainer");
     const addArgumentBtn = document.getElementById("addArgumentBtn");
+    const clearValuesBtn = document.getElementById("clearValuesBtn");
     const calculateBtn = document.getElementById("calculateBtn");
     const resultDiv = document.getElementById("result");
     let argumentCount = 1;
@@ -27,6 +29,13 @@
 
       argumentsContainer.appendChild(newInput);
       argumentCount++;
+    });
+
+    clearValuesBtn.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      argumentsContainer.innerHTML = "";
+      argumentCount = 1;
     });
 
     calcForm.addEventListener("submit", function(event) {
