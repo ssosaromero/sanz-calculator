@@ -46,7 +46,7 @@
       event.preventDefault();
 
       const formData = new FormData(calcForm);
-      const arguments = Array.from(formData.values());
+      const arguments = Array.from(formData.values()).filter(arg => arg.trim() !== "");
 
       const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
 

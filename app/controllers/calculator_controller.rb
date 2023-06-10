@@ -3,32 +3,34 @@ class CalculatorController < ApplicationController
     @calculations = Calculation.all
   end
 
-  # def calculate
-  #   arguments = params[:calc][:arg].values.reject(&:blank?)
-  #   result = calculate_sum(arguments)
-  #   save_calculation(arguments, result)
-
-  #   render plain: result.to_s
-  # end
-
   def calculate
-    arguments = calculation_params[:arguments].reject(&:blank?)
-    result = arguments.map(&:to_f).sum
+    arguments = params[:calc] || []
 
-    calculation = Calculation.create(arguments: arguments, result: result)
+    calculation = Calculation.new(arguments: arguments)
+    result = calculation.calculate_result
 
-    if calculation.persisted?
-      render json: calculation
+    if calculation.save
+      render plain: result.to_s
     else
-      render json: { error: "Failed to save calculation" }, status: :unprocessable_entity
+      render plain: "Error saving calculation"
     end
   end
 
+  # def calculate
+  #   @calculation = Calculation.create(arguments: params[:calc])
+
+  #   render plain: @calculation.result
+
+  #   # Save the calculation to the history
+  #   session[:history] ||= []
+  #   session[:history] << @calculation.id
+  # end
 
   def history
-    calculations = Calculation.all
-    render json: calculations
+    calculations = Calculation.last(3)
+    render json: calculations.reverse, only: [:arguments, :result]
   end
+
 
   private
 
