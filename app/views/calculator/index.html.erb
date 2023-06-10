@@ -1,7 +1,8 @@
 <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
-  <%= form.input :arg1, input_html: { placeholder: "Argument 1" } %>
-  <%= form.input :arg2, input_html: { placeholder: "Argument 2" } %>
-  <!-- Add more inputs for additional arguments -->
+  <div id="argumentsContainer">
+    <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
+  </div>
+  <%= form.button :button, "Add Argument", id: "addArgumentBtn" %>
   <%= form.button :submit, "Calculate", id: "calculateBtn" %>
 <% end %>
 
@@ -10,17 +11,33 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const calcForm = document.getElementById("calcForm");
+    const argumentsContainer = document.getElementById("argumentsContainer");
+    const addArgumentBtn = document.getElementById("addArgumentBtn");
     const calculateBtn = document.getElementById("calculateBtn");
     const resultDiv = document.getElementById("result");
+    let argumentCount = 1;
+
+    addArgumentBtn.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      const newInput = document.createElement("input");
+      newInput.type = "text";
+      newInput.name = `calc[arg${argumentCount}]`;
+      newInput.placeholder = `Argument ${argumentCount + 1}`;
+
+      argumentsContainer.appendChild(newInput);
+      argumentCount++;
+    });
 
     calcForm.addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent form submission
+      event.preventDefault();
 
       const formData = new FormData(calcForm);
-      const arg1 = parseFloat(formData.get("calc[arg1]"));
-      const arg2 = parseFloat(formData.get("calc[arg2]"));
+      const arguments = Array.from(formData.values());
 
-      const sum = arg1 + arg2;
+      const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+
+      const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
 
       resultDiv.textContent = "Result: " + sum;
     });

@@ -5,15 +5,24 @@ class CalculatorController < ApplicationController
       # Render the form view
     end
 
-    def calculate
-      arguments = params[:calc][:arg]
-      numeric_args = arguments.select { |arg| arg.to_i.to_s == arg || arg.to_f.to_s == arg }
-      result = numeric_args.sum(&:to_f)
+    # def calculate
+    #   arguments = params[:calc][:arg]
+    #   numeric_args = arguments.select { |arg| arg.to_i.to_s == arg || arg.to_f.to_s == arg }
+    #   result = numeric_args.sum(&:to_f)
 
-      # Save the query and result in the database
-      Calculation.create(arguments: arguments, result: result)
+    #   # Save the query and result in the database
+    #   Calculation.create(arguments: arguments, result: result)
 
-      render plain: "Result: #{result}"
+    #   render plain: "Result: #{result}"
+    # end
+
+    def calc
+      arguments = params[:calc].values.map(&:to_f)
+      numerical_arguments = arguments.select { |arg| arg.to_s =~ /^[0-9]+(\.[0-9]+)?$/ }
+
+      sum = numerical_arguments.sum
+
+      render plain: "Result: #{sum}"
     end
 
 
