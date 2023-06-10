@@ -1,1 +1,9 @@
-<h1> Calculator in progress </h1>
+
+<%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
+  <%= form.input :arg, input_html: { placeholder: "Argument 1" } %>
+  <%= form.input :arg, input_html: { placeholder: "Argument 2" } %>
+  <!-- Add more inputs for additional arguments -->
+  <%= form.button :submit, "Calculate" %>
+<% end %>
+
+<div id="result"></div>
