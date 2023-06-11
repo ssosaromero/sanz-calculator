@@ -27,9 +27,15 @@
         <div id="result"></div>
       </div>
 
-      <div class="history-box">
-        <h2>Last sums </h2>
-        <div id="historyContainer"></div>
+       <div class="history-box">
+          <h2>Last sums</h2>
+          <div id="historyContainer">
+            <% flash.each do |key, value| %>
+            <div class="flash <%= key %>">
+              <%= value %>
+            </div>
+            <% end %>
+          </div>
       </div>
 
     </main>

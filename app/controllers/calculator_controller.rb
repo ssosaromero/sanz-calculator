@@ -1,20 +1,9 @@
 class CalculatorController < ApplicationController
   def index
     @calculations = Calculation.all
+    @last_sum = cookies[:last_sum] # Retrieve the last stored sum from cookies
   end
 
-  # def calculate
-  #   arguments = params[:calc] || []
-
-  #   calculation = Calculation.new(arguments: arguments)
-  #   result = calculation.calculate_result
-
-  #   if calculation.save
-  #     render plain: result.to_s
-  #   else
-  #     render plain: "Error saving calculation"
-  #   end
-  # end
   def calculate
     arguments = params[:calc].reject(&:blank?)
     sum = arguments.map(&:to_f).sum
