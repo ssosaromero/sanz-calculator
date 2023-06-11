@@ -23,6 +23,11 @@
     const historyContainer = document.getElementById("historyContainer");
     let argumentCount = 0;
 
+      // Function to display error message
+    function displayError(message) {
+      resultDiv.textContent = "Error: " + message;
+    }
+
     addArgumentBtn.addEventListener("click", function(event) {
       event.preventDefault();
 
@@ -76,10 +81,12 @@
             })
             .catch(error => {
               console.log("Error retrieving history:", error);
+               displayError("Failed to retrieve history.");
             });
         })
         .catch(error => {
           console.log("Error saving calculation:", error);
+          displayError("Failed to save calculation.");
         });
     });
 
@@ -98,6 +105,7 @@
       })
       .catch(error => {
         console.log("Error retrieving history:", error);
+        displayError("Failed to retrieve history.");
       });
   });
 </script>
