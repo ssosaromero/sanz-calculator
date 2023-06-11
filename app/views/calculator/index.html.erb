@@ -1,111 +1,135 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-<%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
-  <div id="argumentsContainer"></div>
-  <%= form.button :button, "Add number", id: "addArgumentBtn" %>
-  <%= form.button :button, "Clear Values", id: "clearValuesBtn" %>
-  <%= form.button :submit, "Calculate", id: "calculateBtn" %>
-<% end %>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/main.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Document</title>
+</head>
 
-<div id="result"></div>
+<body>
+    <main class="main-container">
 
-<h2>History</h2>
-<div id="historyContainer"></div>
+     <div class="welcome-box">
+        <img src="/assets/images/SANZ.png" alt="" width="120px;">
+        <h1>Sistema de Climatización personalizados para vehículos de carretera y todoterreno</h1>
+     </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const calcForm = document.getElementById("calcForm");
-    const argumentsContainer = document.getElementById("argumentsContainer");
-    const addArgumentBtn = document.getElementById("addArgumentBtn");
-    const clearValuesBtn = document.getElementById("clearValuesBtn");
-    const calculateBtn = document.getElementById("calculateBtn");
-    const resultDiv = document.getElementById("result");
-    const historyContainer = document.getElementById("historyContainer");
-    let argumentCount = 0;
+     <div class="calc-box">
+        <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
+          <div id="argumentsContainer"></div>
+          <%= form.button :button, "Add number", id: "addArgumentBtn" %>
+          <%= form.button :button, "Clear Values", id: "clearValuesBtn" %>
+          <%= form.button :submit, "Calculate", id: "calculateBtn" %>
+        <% end %>
 
-      // Function to display error message
-    function displayError(message) {
-      resultDiv.textContent = "Error: " + message;
-    }
+        <div id="result"></div>
+      </div>
 
-    addArgumentBtn.addEventListener("click", function(event) {
-      event.preventDefault();
+      <div class="history-box">
+        <h2>last sums</h2>
+        <div id="historyContainer"></div>
+      </div>
 
-      const newInput = document.createElement("input");
-      newInput.type = "text";
-      newInput.name = `calc[]`;
+    </main>
 
-      argumentsContainer.appendChild(newInput);
-      argumentCount++;
-    });
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const calcForm = document.getElementById("calcForm");
+        const argumentsContainer = document.getElementById("argumentsContainer");
+        const addArgumentBtn = document.getElementById("addArgumentBtn");
+        const clearValuesBtn = document.getElementById("clearValuesBtn");
+        const calculateBtn = document.getElementById("calculateBtn");
+        const resultDiv = document.getElementById("result");
+        const historyContainer = document.getElementById("historyContainer");
+        let argumentCount = 0;
 
-    clearValuesBtn.addEventListener("click", function(event) {
-      event.preventDefault();
+          // Function to display error message
+        function displayError(message) {
+          resultDiv.textContent = "Error: " + message;
+        }
 
-      argumentsContainer.innerHTML = "";
-      argumentCount = 0;
-      resultDiv.textContent = ""; // Clear the result
-    });
+        addArgumentBtn.addEventListener("click", function(event) {
+          event.preventDefault();
 
-    calcForm.addEventListener("submit", function(event) {
-      event.preventDefault();
+          const newInput = document.createElement("input");
+          newInput.type = "text";
+          newInput.name = `calc[]`;
 
-      const formData = new FormData(calcForm);
-      const arguments = Array.from(formData.values()).filter(arg => arg.trim() !== "");
+          argumentsContainer.appendChild(newInput);
+          argumentCount++;
+        });
 
-      const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+        clearValuesBtn.addEventListener("click", function(event) {
+          event.preventDefault();
 
-      const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
+          argumentsContainer.innerHTML = "";
+          argumentCount = 0;
+          resultDiv.textContent = ""; // Clear the result
+        });
 
-      resultDiv.textContent = "Result: " + sum;
+        calcForm.addEventListener("submit", function(event) {
+          event.preventDefault();
 
-      // Save the calculation to the history
-      fetch("/calc", {
-        method: "POST",
-        body: formData
-      })
-        .then(response => response.text())
-        .then(result => {
+          const formData = new FormData(calcForm);
+          const arguments = Array.from(formData.values()).filter(arg => arg.trim() !== "");
+
+          const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+
+          const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
+
+          resultDiv.textContent = "Result: " + sum;
+
+          // Save the calculation to the history
+          fetch("/calc", {
+            method: "POST",
+            body: formData
+          })
+            .then(response => response.text())
+            .then(result => {
           // Retrieve the updated history and display it
-          fetch("/history")
-            .then(response => response.json())
-            .then(data => {
-              const historyHTML = data.map(calculation => {
-                return `
-                  <p>Arguments: ${calculation.arguments.join(", ")}</p>
-                  <p>Result: ${calculation.result}</p>
-                  <hr>
-                `;
-              }).join("");
-              historyContainer.innerHTML = historyHTML;
+            fetch("/history")
+              .then(response => response.json())
+              .then(data => {
+                const historyHTML = data.map(calculation => {
+                  return `
+                    <p>Arguments: ${calculation.arguments.join(", ")}</p>
+                    <p>Result: ${calculation.result}</p>
+                    <hr>
+                  `;
+                }).join("");
+                historyContainer.innerHTML = historyHTML;
+              })
+              .catch(error => {
+                console.log("Error retrieving history:", error);
+                displayError("Failed to retrieve history.");
+              });
             })
             .catch(error => {
-              console.log("Error retrieving history:", error);
-               displayError("Failed to retrieve history.");
+              console.log("Error saving calculation:", error);
+              displayError("Failed to save calculation.");
             });
-        })
-        .catch(error => {
-          console.log("Error saving calculation:", error);
-          displayError("Failed to save calculation.");
         });
-    });
 
-    // Retrieve the history when the page loads
-    fetch("/history")
-      .then(response => response.json())
-      .then(data => {
-        const historyHTML = data.map(calculation => {
-          return `
-            <p>Arguments: ${calculation.arguments.join(", ")}</p>
-            <p>Result: ${calculation.result}</p>
-            <hr>
-          `;
-        }).join("");
-        historyContainer.innerHTML = historyHTML;
-      })
-      .catch(error => {
-        console.log("Error retrieving history:", error);
-        displayError("Failed to retrieve history.");
-      });
-  });
-</script>
+      //   // Retrieve the history when the page loads
+      //   fetch("/history")
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       const historyHTML = data.map(calculation => {
+      //         return `
+      //           <p>Arguments: ${calculation.arguments.join(", ")}</p>
+      //           <p>Result: ${calculation.result}</p>
+      //           <hr>
+      //         `;
+      //       }).join("");
+      //       historyContainer.innerHTML = historyHTML;
+      //     })
+      //     .catch(error => {
+      //       console.log("Error retrieving history:", error);
+      //       displayError("Failed to retrieve history.");
+      //     });
+      // });
+    </script>
+
+</body>
