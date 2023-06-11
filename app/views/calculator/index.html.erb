@@ -12,6 +12,8 @@
 <h2>History</h2>
 <div id="historyContainer"></div>
 
+<div id="errorContainer" style="color: red;"></div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const calcForm = document.getElementById("calcForm");
@@ -22,10 +24,12 @@
     const resultDiv = document.getElementById("result");
     const historyContainer = document.getElementById("historyContainer");
     let argumentCount = 0;
+    const errorContainer = document.getElementById("errorContainer");
 
       // Function to display error message
     function displayError(message) {
-      resultDiv.textContent = "Error: " + message;
+      errorContainer.textContent = message;
+
     }
 
     addArgumentBtn.addEventListener("click", function(event) {
@@ -54,6 +58,11 @@
       const arguments = Array.from(formData.values()).filter(arg => arg.trim() !== "");
 
       const numericArguments = arguments.filter(arg => !isNaN(parseFloat(arg)));
+
+      if (numericArguments.length !== arguments.length) {
+       displayError("Invalid input: Only numbers are allowed.");
+        return;
+      }
 
       const sum = numericArguments.reduce((total, arg) => total + parseFloat(arg), 0);
 
