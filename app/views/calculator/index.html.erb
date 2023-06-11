@@ -12,7 +12,7 @@
     <main class="main-container">
 
      <div class="welcome-box">
-        <img src="/assets/images/SANZ.png" alt="" width="120px;">
+        <img src="https://sanzclima.com/wp-content/uploads/2020/12/LOGO_es.svg" alt="" width="120px;">
         <h1>Sistema de Climatización personalizados para vehículos de carretera y todoterreno</h1>
      </div>
 
@@ -20,7 +20,7 @@
         <%= simple_form_for :calc, url: "/calc", id: "calcForm" do |form| %>
           <div id="argumentsContainer"></div>
           <%= form.button :button, "Add number", id: "addArgumentBtn" %>
-          <%= form.button :button, "Clear Values", id: "clearValuesBtn" %>
+          <%= form.button :button, "Clear values", id: "clearValuesBtn" %>
           <%= form.button :submit, "Calculate", id: "calculateBtn" %>
         <% end %>
 
@@ -28,7 +28,7 @@
       </div>
 
       <div class="history-box">
-        <h2>last sums</h2>
+        <h2>Last sums </h2>
         <div id="historyContainer"></div>
       </div>
 
@@ -94,8 +94,8 @@
               .then(data => {
                 const historyHTML = data.map(calculation => {
                   return `
-                    <p>Arguments: ${calculation.arguments.join(", ")}</p>
-                    <p>Result: ${calculation.result}</p>
+                    <p> ${calculation.arguments.join("+")}
+                        = ${calculation.result}</p>
                     <hr>
                   `;
                 }).join("");
@@ -118,8 +118,8 @@
           .then(data => {
             const historyHTML = data.map(calculation => {
               return `
-                <p>Arguments: ${calculation.arguments.join(", ")}</p>
-                <p>Result: ${calculation.result}</p>
+                <p> ${calculation.arguments.join("+")}
+                    = ${calculation.result}</p>
                 <hr>
               `;
             }).join("");
