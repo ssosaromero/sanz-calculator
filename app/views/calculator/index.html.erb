@@ -112,24 +112,24 @@
             });
         });
 
-      //   // Retrieve the history when the page loads
-      //   fetch("/history")
-      //     .then(response => response.json())
-      //     .then(data => {
-      //       const historyHTML = data.map(calculation => {
-      //         return `
-      //           <p>Arguments: ${calculation.arguments.join(", ")}</p>
-      //           <p>Result: ${calculation.result}</p>
-      //           <hr>
-      //         `;
-      //       }).join("");
-      //       historyContainer.innerHTML = historyHTML;
-      //     })
-      //     .catch(error => {
-      //       console.log("Error retrieving history:", error);
-      //       displayError("Failed to retrieve history.");
-      //     });
-      // });
+        // Retrieve the history when the page loads
+        fetch("/history")
+          .then(response => response.json())
+          .then(data => {
+            const historyHTML = data.map(calculation => {
+              return `
+                <p>Arguments: ${calculation.arguments.join(", ")}</p>
+                <p>Result: ${calculation.result}</p>
+                <hr>
+              `;
+            }).join("");
+            historyContainer.innerHTML = historyHTML;
+          })
+          .catch(error => {
+            console.log("Error retrieving history:", error);
+            displayError("Failed to retrieve history.");
+          });
+      });
     </script>
 
 </body>
